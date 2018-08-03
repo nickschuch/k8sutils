@@ -11,21 +11,23 @@ Tools for a nicer Kubernetes development experience.
 package main
 
 import (
-    "fmt"
+	"fmt"
 
-    "github.com/previousnext/mysql-toolkit/stuff/k8s/configmap"
+	"github.com/nickschuch/k8sutils/configmap"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Backend struct {
-    Host string `k8s_configmap:"backend.host"`
-    Port string `k8s_configmap:"backend.port"`
+	Host string `k8s_configmap:"backend.host"`
+	Port string `k8s_configmap:"backend.port"`
 }
 
 func main() {
-    cfg := corev1.ConfigMap{
+	cfg := corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "example",
-			Name: "conf",
+			Name:      "conf",
 		},
 		Data: map[string]string{
 			"backend.host": "1.1.1.1",
@@ -33,12 +35,14 @@ func main() {
 		},
 	}
 
-    err = configmap.Unmarshal(clientset, namespace, name, &b)
-    if err != nil {
-        panic(err)
-    }
+	var b Backend
 
-    fmt.Println("Host:", b.Host)
-    fmt.Println("Port:", b.Port)
+	err := configmap.Unmarshal(cfg, &b)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Host:", b.Host)
+	fmt.Println("Port:", b.Port)
 }
 ```
