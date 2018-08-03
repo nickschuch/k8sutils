@@ -13,9 +13,6 @@ package main
 import (
     "fmt"
 
-    "k8s.io/client-go/kubernetes"
-    "k8s.io/client-go/tools/clientcmd"
-
     "github.com/previousnext/mysql-toolkit/stuff/k8s/configmap"
 )
 
@@ -25,22 +22,16 @@ type Backend struct {
 }
 
 func main() {
-    var b Backend
-
-    var (
-        namespace = "default"
-        name      = "example"
-    )
-
-    config, err := clientcmd.BuildConfigFromFlags("", "/home/USER/.kube/config")
-    if err != nil {
-        panic(err)
-    }
-
-    clientset, err := kubernetes.NewForConfig(config)
-    if err != nil {
-        panic(err)
-    }
+    cfg := corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "example",
+			Name: "conf",
+		},
+		Data: map[string]string{
+			"backend.host": "1.1.1.1",
+			"backend.port": "443",
+		},
+	}
 
     err = configmap.Unmarshal(clientset, namespace, name, &b)
     if err != nil {
