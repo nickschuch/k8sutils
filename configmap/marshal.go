@@ -25,6 +25,10 @@ func Marshal(obj interface{}) (map[string]string, error) {
 	for i := 0; i < val.NumField(); i++ {
 		tag := val.Type().Field(i).Tag.Get(Tag)
 
+		if tag == "" {
+			continue
+		}
+
 		switch val.Field(i).Kind() {
 		case reflect.String:
 			data[tag] = val.Field(i).String()

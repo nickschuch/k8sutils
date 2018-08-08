@@ -9,7 +9,7 @@ import (
 )
 
 // Unmarshal a Secret to a struct.
-func Unmarshal(s corev1.Secret, obj interface{}) error {
+func Unmarshal(s *corev1.Secret, obj interface{}) error {
 	val := reflect.ValueOf(obj)
 
 	if val.Kind() == reflect.Interface && !val.IsNil() {

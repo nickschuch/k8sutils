@@ -9,7 +9,7 @@ import (
 )
 
 // Unmarshal a ConfigMap to a struct.
-func Unmarshal(cfg corev1.ConfigMap, obj interface{}) error {
+func Unmarshal(cfg *corev1.ConfigMap, obj interface{}) error {
 	val := reflect.ValueOf(obj)
 
 	if val.Kind() == reflect.Interface && !val.IsNil() {
@@ -25,6 +25,10 @@ func Unmarshal(cfg corev1.ConfigMap, obj interface{}) error {
 
 	for i := 0; i < val.NumField(); i++ {
 		tag := val.Type().Field(i).Tag.Get(Tag)
+
+		if tag == "" {
+			continue
+		}
 
 		if d, ok := cfg.Data[tag]; ok {
 			switch val.Field(i).Kind() {
